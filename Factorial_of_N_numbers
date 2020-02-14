@@ -1,0 +1,211 @@
+#include<stdio.h>
+#include<math.h>
+static int size = 6;
+int checkm(short int* p, int x) {
+    int a = *(p);
+    if (x == 1) { return 0; }
+    if (x == 2 && *(p + size - a) >= 5) { return 1; }
+    if (x == 3) {
+        for (int i = 0; i < a; i++) {
+            if (*(p + size - a + i) > 3) { return 1; }
+            if (*(p + size - a + i) < 3) { return 0; }
+        }
+        return 0;
+    }
+    if (x == 4) {
+        if (*(p + size - a) > 2) { return 1; }
+        if (*(p + size - a) < 2) { return 0; }
+        if (a > 1 && *(p + size - a + 1) >= 5) { return 1; }
+        return 0;
+    }
+    if (x == 5) {
+        if (*(p + size - a) >= 2) { return 1; }
+        return 0;
+    }
+    if (x == 6) {
+        {
+            if(*(p+size-a)>1){return 1;}
+            for (int i = 1; i < a; i++) {
+                if (*(p + size - a + i) > 6) { return 1; }
+                if (*(p + size - a + i) < 6) { return 0; }
+            }
+            return 0;
+        }
+    }
+    if (x == 7) {
+        int arr[] = { 1,4,2,8,5,7 };
+        int w = 0;
+        while (w < a) {
+            int    k = arr[w % 6];
+            if (*(p + size - a + w) > k) { return 1; }
+            if (*(p + size - a + w) < k) { return 0; }
+            w++;
+        }
+        return 0;
+    }
+    if (x == 8) {
+        int k = 1;
+        if (*(p + size - a) > k) { return 1; }
+        if (*(p + size - a) < k) { return 0; }
+        k = 2;
+        if (*(p + size - a + 1) > k) { return 1; }
+        if (*(p + size - a + 1) < k) { return 0; }
+        k = 5;
+        if (*(p + size - a + 2) >= k) { return 1; }
+        if (*(p + size - a + 2) < k) { return 0; }
+    }
+    if (x == 9) {
+        for (int i = 0; i < a; i++) {
+            if (*(p + size - a + i) > 1) { return 1; }
+            if (*(p + size - a + i) < 1) { return 0; }
+        }
+        return 0;
+
+    }
+    return 0;
+}
+int mult(short int* p, int a, short int* b) {
+    int add = checkm(p, a);
+    unsigned short int r = 0;
+    for (int i = (size - 1); i >= size - *(p); i--) {
+        unsigned short int c;
+        c = *(p + i) * a + r;
+        r = 0;
+        if (c > 9 && i != size - *(p)) {
+            r = c / 10;
+            c = c % 10;
+        }
+        if (c > 9 && i == size - *(p)) {
+            *(b + i - 1) = c / 10;
+            c = c % 10;
+            *(b + i) = c;
+            break;
+        }
+        *(b + i) = c;
+    }
+    *(b) = *(p)+add;
+    return 0;
+}
+int add(short int* a, short int* b) {
+    short int r = 0;
+    short int c = 0;
+    int x = size - *(a);
+    int y = size - *(b);
+
+    for (unsigned int i = size - 1; i >= x || i >= y; i--) {
+        if (i >= x && i >= y) {
+            c = *(a + i) + *(b + i) + r;
+            r = 0;
+            if (c > 9) {
+                r = c / 10;
+                c = c % 10;
+            }
+            *(a + i) = c;
+        }
+        if (x == y && r != 0 && i == x) {
+            *(a + i - 1) = r;
+            *(a) = *(a)+1;
+            break;
+        }
+        if (i < x || i < y) {
+            if (i < x) {
+                c = *(b + i) + r;
+                r = 0;
+                *(a + i) = c % 10;
+                r = c / 10;
+                *(a) = *(a)+1;
+                if (i == y && r != 0) {
+                    *(a + i - 1) = r;
+                    *(a) = *(a)+1;
+                }
+            }
+            if (i < y) {
+                c = *(a + i) + r;
+                r = 0;
+                *(a + i) = c % 10;
+                r = c / 10;
+
+                if (i == x && r != 0) {
+                    *(a + i - 1) = r;
+                    *(a) = *(a)+1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+int time(short int* a) {
+    unsigned int i = size - *(a);
+
+    while (i < size) {
+        *(a + i - 1) = *(a + i);
+        i++;
+    }
+    *(a + size - 1) = 0;
+    *(a) = *(a)+1;
+    return 0;
+}
+int fact(int factorial) {
+float si=0;
+for(int i=2;i<=factorial;i++){
+    si=si+log(i);
+}
+si=si/log(10);
+size=si+2;
+    short int a[size];
+    short int q[size];
+    a[0] = 1;
+    a[size - 1] = 1;
+    for (int i = 2; i <= factorial; i++) {
+        int n = i;
+        if (i % 2 == 0) {    while(n%10==0){time(a);
+            n=n/10;
+        }
+            q[size - 1] = 0;
+            q[0] = 1;
+            int count = 0;
+            while (n > 0) {
+            short int r[size];
+                mult(a, n % 10, r);
+                n = n / 10;
+                for (int cm = count; cm > 0; cm--) { time(r); }
+                add(q, r);
+                count++;
+            }
+        }
+        if (i % 2 == 1) {
+            a[size - 1] = 0;
+            a[0] = 1;
+            int count = 0;
+            while (n > 0) {
+            short int r[size];
+                mult(q, n % 10, r);
+                n = n / 10;
+                for (int cm = count; cm > 0; cm--) { time(r); }
+                add(a, r);
+                count++;
+            }
+        }
+
+    }
+    if (factorial % 2 == 0) {
+        for (int i = size - *(q); i < size; i++) { printf("%d", q[i]); }
+    }
+    if (factorial % 2 == 1) {
+        for (int i = size - *(a); i < size; i++) { printf("%d", a[i]); }
+    }
+printf("\n");
+return 0;
+    
+}
+int main(){
+    int k;
+    int r;
+    scanf("%d",&k);
+    for(int i=1;i<=k;i++){
+        scanf("%d",&r);
+        if(r==0|| r==1){printf("1\n");}
+        else{fact(r);}
+    }
+    return 0;
+}
